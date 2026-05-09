@@ -48,6 +48,7 @@ export function YoutubeEmbed({ videoId, title }: Props) {
               src={posterSrc}
               alt=""
               className="video-poster-img"
+              referrerPolicy="no-referrer"
               onError={bumpPosterQuality}
             />
             <span className="video-play-badge" aria-hidden />

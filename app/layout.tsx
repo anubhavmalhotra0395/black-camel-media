@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Inter } from "next/font/google";
+import { getSiteUrl } from "../lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,7 +17,7 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.blackcamelmedia.com"),
+  metadataBase: new URL(getSiteUrl()),
   title: "Sambhav Mehra | Black Camel Media",
   description:
     "Food and lifestyle photographer in Dubai. Sambhav Mehra portfolio showcasing photography, video campaigns, and hospitality work across the Middle East.",

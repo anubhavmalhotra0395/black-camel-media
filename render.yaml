@@ -11,6 +11,9 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
+      # Set to your live URL (e.g. https://black-camel-media.onrender.com) so metadata and assets resolve correctly
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
       # Optional: set in Dashboard if you use the Instagram grid (see .env.example)
       - key: INSTAGRAM_USER_ID
         sync: false

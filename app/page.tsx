@@ -27,6 +27,9 @@ const photoUrls = [
   "https://images.squarespace-cdn.com/content/v1/5ccc66cf9b8fe87c448ebbb2/1685276374631-Q9QMEGTTIVIBH71ZSF36/043A6007.jpg?format=900w"
 ];
 
+/* Tile mosaics with 9 cells each; pool repeats URLs so every chapter has images (photoUrls alone is too short). */
+const mosaicPool = Array.from({ length: 45 }, (_, i) => photoUrls[i % photoUrls.length]);
+
 const youtubeUrls = [
   "https://youtu.be/rbosk363mYM",
   "https://youtube.com/shorts/pTjQ9g6Y9k8?feature=share",
@@ -80,35 +83,35 @@ const chapterBlocks = [
     title: "Creative Strategy",
     subtitle: "Identity Blueprint",
     lines: ["Clear Brand Identity", "Building Community", "Effective Market Positioning"],
-    images: photoUrls.slice(0, 9)
+    images: mosaicPool.slice(0, 9)
   },
   {
     id: "documentary",
     title: "Documentary",
     subtitle: "Testimonials",
     lines: ["Compelling impact narratives", "Authentic real-life stories", "Driving awareness"],
-    images: photoUrls.slice(9, 18)
+    images: mosaicPool.slice(9, 18)
   },
   {
     id: "commercials",
     title: "Commercials",
     subtitle: "Creative Storytelling",
     lines: ["Dynamic brand narratives", "Engaging visual stories", "Impactful ad campaigns"],
-    images: photoUrls.slice(18, 27)
+    images: mosaicPool.slice(18, 27)
   },
   {
     id: "events",
     title: "Events",
     subtitle: "Live Event Coverage",
     lines: ["Memorable moments", "Unforgettable experiences", "Dynamic event footage"],
-    images: photoUrls.slice(27, 36)
+    images: mosaicPool.slice(27, 36)
   },
   {
     id: "corporate",
     title: "Corporate",
     subtitle: "Business Highlights",
     lines: ["Focused on details", "Success stories", "Distinct brand value"],
-    images: photoUrls.slice(36, 45)
+    images: mosaicPool.slice(36, 45)
   }
 ];
 
@@ -129,15 +132,20 @@ async function getInstagramPosts(): Promise<InstagramMedia[]> {
 
   const endpoint = `https://graph.instagram.com/${userId}/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp&limit=12&access_token=${accessToken}`;
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
   try {
     const response = await fetch(endpoint, {
-      next: { revalidate: 3600 }
+      next: { revalidate: 3600 },
+      signal: controller.signal
     });
     if (!response.ok) return [];
     const payload = (await response.json()) as { data?: InstagramMedia[] };
     return payload.data ?? [];
   } catch {
     return [];
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -413,6 +421,7 @@ export default async function HomePage() {
                       sizes="(max-width: 900px) 50vw, 28vw"
                       className="mosaic-img"
                       unoptimized
+                      referrerPolicy="no-referrer"
                     />
                   </div>
                 ))}
@@ -484,7 +493,12 @@ export default async function HomePage() {
                       rel="noreferrer"
                     >
                       <span className="instagram-cell">
-                        <img src={preview} alt={post.caption ?? "Instagram post"} loading="lazy" />
+                        <img
+                          src={preview}
+                          alt={post.caption ?? "Instagram post"}
+                          loading="lazy"
+                          referrerPolicy="no-referrer"
+                        />
                       </span>
                       {post.media_type === "VIDEO" && <span className="media-pill">Video</span>}
                     </a>
