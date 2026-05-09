@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# next
+.next/
+out/
+
+# env (secrets — set in Vercel / host dashboard)
+.env
+.env.local
+.env.*.local
+
+# debug / os
+npm-debug.log*
+.DS_Store
+*.pem
+
+# vercel
+.vercel
